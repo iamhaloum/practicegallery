@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -458,7 +458,7 @@
                     return;
                 }
                 
-                container.innerHTML = notes.reverse().map(note => `
+                container.innerHTML = notes.map(note => `
                     <div class="note-item">
                         <div class="note-name">${escapeHtml(note.name)}</div>
                         <div class="note-content">${escapeHtml(note.content)}</div>
@@ -487,4 +487,5 @@
         }
     </script>
 </body>
+</html>
 </html>
