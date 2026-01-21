@@ -130,6 +130,99 @@
         button:active {
             cursor: inherit;
         }
+        .notes-section {
+            max-width: 600px;
+            margin: 50px auto 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .notes-section h2 {
+            color: #333;
+            font-family: 'Dancing Script', cursive;
+            margin-top: 0;
+        }
+        .notes-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .notes-form input {
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+        .notes-form input:focus {
+            outline: none;
+            border-color: #ca9fb0;
+            box-shadow: 0 0 6px rgba(202, 159, 176, 0.3);
+        }
+        .notes-form button {
+            padding: 10px 20px;
+            background: #ca9fb0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .notes-form button:hover {
+            background: #b88aa0;
+        }
+        .notes-container {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 12px;
+        }
+        .notes-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .notes-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+        .notes-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+        .notes-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .note-item {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #ca9fb0;
+        }
+        .note-item:last-child {
+            margin-bottom: 0;
+        }
+        .note-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .note-content {
+            color: #555;
+            font-size: 13px;
+            word-wrap: break-word;
+        }
+        .notes-empty {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-size: 14px;
+        }
 
     </style>
 </head>
@@ -158,7 +251,31 @@
         </div>
     </a>
     
+    <!-- Notes Section -->
+    <div class="notes-section">
+        <h2>📝 Notes</h2>
+        <div class="notes-form">
+            <input 
+                type="text" 
+                id="noteName" 
+                placeholder="Your name" 
+                maxlength="50"
+            >
+            <input 
+                type="text" 
+                id="noteContent" 
+                placeholder="Write your note here..." 
+                maxlength="500"
+            >
+            <button onclick="addNote()">Add Note</button>
+        </div>
+        <div class="notes-container" id="notesContainer">
+            <div class="notes-empty">No notes yet. Add one to get started!</div>
+        </div>
+    </div>
+    
     <script>
+
         // Cursor options
         const cursorOptions = [
             { name: '✨', value: 'sparkle' },
@@ -295,7 +412,79 @@
                 });
             });
         });
+        
+        // Notes functionality
+        async function addNote() {
+            const noteName = document.getElementById('noteName').value.trim();
+            const noteContent = document.getElementById('noteContent').value.trim();
+            
+            if (!noteName || !noteContent) {
+                alert('Please fill in both fields');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'add');
+                formData.append('name', noteName);
+                formData.append('content', noteContent);
+                
+                const response = await fetch('notes.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    document.getElementById('noteName').value = '';
+                    document.getElementById('noteContent').value = '';
+                    loadNotes();
+                } else {
+                    alert('Failed to add note');
+                }
+            } catch (error) {
+                console.error('Error adding note:', error);
+                alert('Error adding note');
+            }
+        }
+        
+        async function loadNotes() {
+            try {
+                const response = await fetch('notes.php?action=get');
+                const notes = await response.json();
+                const container = document.getElementById('notesContainer');
+                
+                if (notes.length === 0) {
+                    container.innerHTML = '<div class="notes-empty">No notes yet. Add one to get started!</div>';
+                    return;
+                }
+                
+                container.innerHTML = notes.reverse().map(note => `
+                    <div class="note-item">
+                        <div class="note-name">${escapeHtml(note.name)}</div>
+                        <div class="note-content">${escapeHtml(note.content)}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                const container = document.getElementById('notesContainer');
+                container.innerHTML = '<div class="notes-empty">Error loading notes</div>';
+            }
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Load notes when DOMContentLoaded fires
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadNotes();
+            });
+        } else {
+            loadNotes();
+        }
     </script>
 </body>
-
 </html>
