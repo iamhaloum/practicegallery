@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halima's Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #ca9fb0;
+            text-align: center;
+        }
+        .return-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: white;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+           /* font-family: 'Dancing Script', cursive; */
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            z-index: 1000;
+        }
+        .return-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #333;
+                      font-family: 'Dancing Script', cursive;
+        }
+        /* Link cursor states */
+        a {
+            cursor: inherit;
+        }
+        a:hover {
+            cursor: inherit;
+        }
+        a:active {
+            cursor: inherit;
+        }
+        button {
+            cursor: inherit;
+        }
+        button:active {
+            cursor: inherit;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            
+        }
+        .gallery-item {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            max-width: 400px;
+       
+        }
+    </style>
+</head>
+<body>
+    <a href="indexD.html" class="return-btn">← Return</a>
+    
+    <h1>Halima's Gallery  </h1>
+    <p>Women throughout art ♡ </p>
+    
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="1.jpg" alt="Art piece 1">
+        </div>
+        <div class="gallery-item">
+            <img src="2.jpg" alt="Art piece 2">
+        </div>
+        <div class="gallery-item">
+            <img src="3.jpg" alt="Art piece 3">
+        </div>
+        <div class="gallery-item">
+            <img src="4.jpg" alt="Art piece 4">
+        </div>
+        <div class="gallery-item">
+            <img src="5.jpg" alt="Art piece 5">
+        </div>
+        <div class="gallery-item">
+            <img src="6.jpg" alt="Art piece 6">
+        </div>
+    </div>
+    
+    <script>
+        // Cursor options
+        const cursorOptions = [
+            { name: '✨', value: 'sparkle' },
+            { name: '🎨', value: 'palette' },
+            { name: '🦋', value: 'butterfyl' },
+            { name: '🌸', value: 'flower' },
+            { name: '🪽', value: 'wing' },
+            { name: '💕', value: 'hearts' }
+        ];
+        
+        let currentCursor = null;
+        
+        // Create cursor URL with different styles
+        function getCursorUrl(emoji, scale = 1, opacity = 1) {
+            return `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text x="0" y="24" font-size="24" opacity="${opacity}" style="transform: scale(${scale})">${emoji}</text></svg>') 0 0, auto`;
+        }
+        
+        // Apply cursor from localStorage
+        function applySavedCursor() {
+            const savedCursor = localStorage.getItem('selectedCursor');
+            if (savedCursor) {
+                const cursorObj = cursorOptions.find(c => c.value === savedCursor);
+                if (cursorObj) {
+                    currentCursor = cursorObj.name;
+                    applyCustomCursor(currentCursor);
+                    applyLinkHoverStates(currentCursor);
+                }
+            }
+        }
+        
+        // Apply cursor to all elements
+        function applyCustomCursor(emoji) {
+            document.documentElement.style.cursor = getCursorUrl(emoji);
+            document.body.style.cursor = getCursorUrl(emoji);
+            document.querySelectorAll('*').forEach(el => {
+                el.style.cursor = getCursorUrl(emoji);
+            });
+            
+            // Apply to links
+            document.querySelectorAll('a, button').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    el.style.cursor = getCursorUrl(emoji, 1.1);
+                });
+                el.addEventListener('mouseleave', () => {
+                    el.style.cursor = getCursorUrl(emoji);
+                });
+                el.addEventListener('mousedown', () => {
+                    el.style.cursor = getCursorUrl(emoji, 0.8);
+                });
+                el.addEventListener('mouseup', () => {
+                    el.style.cursor = getCursorUrl(emoji, 1.1);
+                });
+            });
+        }
+        
+        // Apply link hover states
+        function applyLinkHoverStates(emoji) {
+            const style = document.createElement('style');
+            style.textContent = `
+                * {
+                    cursor: ${getCursorUrl(emoji)} !important;
+                }
+                html, body {
+                    cursor: ${getCursorUrl(emoji)} !important;
+                }
+                a, button {
+                    cursor: ${getCursorUrl(emoji)} !important;
+                }
+                a:hover, button:hover {
+                    cursor: ${getCursorUrl(emoji, 1.1)} !important;
+                }
+                a:active, button:active {
+                    cursor: ${getCursorUrl(emoji, 0.8)} !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Initialize cursor selector
+        function initCursorSelector() {
+            const container = document.getElementById('cursorOptions');
+            if (!container) return; // Skip if no container
+            const savedCursor = localStorage.getItem('selectedCursor');
+            
+            cursorOptions.forEach(cursor => {
+                const option = document.createElement('div');
+                option.className = 'cursor-option';
+                if (savedCursor === cursor.value) {
+                    option.classList.add('active');
+                }
+                option.textContent = cursor.name;
+                option.onclick = () => selectCursor(cursor.value, option);
+                container.appendChild(option);
+            });
+        }
+        
+        // Select cursor
+        function selectCursor(value, element) {
+            // Remove active class from all
+            document.querySelectorAll('.cursor-option').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Add active to clicked
+            element.classList.add('active');
+            
+            // Save to localStorage
+            localStorage.setItem('selectedCursor', value);
+            
+            // Apply cursor
+            const cursorObj = cursorOptions.find(c => c.value === value);
+            currentCursor = cursorObj.name;
+            applyCustomCursor(currentCursor);
+            
+            // Reapply link states
+            const oldStyles = document.querySelectorAll('style[data-cursor-style]');
+            oldStyles.forEach(s => s.remove());
+            applyLinkHoverStates(currentCursor);
+        }
+        
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initCursorSelector();
+            applySavedCursor();
+            
+            // Prevent cursor reset on link clicks
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    // Keep the custom cursor active during navigation
+                    if (currentCursor) {
+                        e.preventDefault();
+                        setTimeout(() => {
+                            window.location.href = link.href;
+                        }, 50);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
