@@ -3,8 +3,8 @@ header('Content-Type: application/json');
 
 // Update these with your cloud database credentials
 $servername = "localhost";  // Your cloud host
-$username = "root";         // Your database username
-$password = "";             // Your database password
+$username = "webuser";
+$password = "StrongPassword123";
 $dbname = "mydb";           // Your database name
 
 try {
@@ -48,3 +48,4 @@ try {
     echo json_encode(['error' => $e->getMessage()]);
 }
 ?>
+
